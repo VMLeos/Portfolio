@@ -1,0 +1,80 @@
+.divizq{
+    background: url("/home/victor/Documentos/Ingeniería/Portafolio\ VML/assets/images/space 2.png")
+    no-repeat, fixed center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    height: 800px;
+    width: 1000px;
+    text-align: center;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-bottom: 0px;
+    margin-left: 100px;
+    margin-top: 20px;
+    position: relative;
+    float: left;
+    border: #575657 4px solid;
+    background-color:rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+}
+.divder{
+    background: url("/home/victor/Documentos/Ingeniería/Portafolio\ VML/assets/images/space 3.jpg")
+    no-repeat, fixed center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    height: 700px;
+    width: 400px;
+    text-align: center;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-bottom: 0px;
+    margin-right: 200px;
+    margin-top: 70px;
+    position: relative;
+    float: right;
+    border: #575657 4px solid;
+    background-color:rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+}
+.divder p{
+    color: #fff;
+    font-size:25px;
+    text-shadow: 7px 5px 7px #000000;
+}
+.divder b{
+    color: rgb(243, 126, 17)
+}
+.divizq p{
+    color: #fff;
+    text-shadow: 12px 10px 12px #000000;
+}
+.img1{
+    position: relative;
+    width: 600px;
+    height: 600px;
+}
+.divder h1{
+    color: #fff;
+    text-shadow: 12px 10px 12px #000000;
+}
+.divder a{
+    color:rgb(243, 126, 17);
+    font-size: 30px;
+    text-decoration: none;
+    text-shadow: 7px 5px 7px #fa7223;
+}
+.divder a:hover{
+    color: rgb(240, 236, 18);
+    text-shadow: 15px 15px 15px #adf13e;
+}
+.divizq h1{
+    color: #fff;
+}
+.txt{
+    text-align: center;
+    color: #fff;
+}
