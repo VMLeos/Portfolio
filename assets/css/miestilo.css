@@ -78,3 +78,77 @@
     text-align: center;
     color: #fff;
 }
+.divder2{
+    background: url("/home/victor/Documentos/Ingeniería/Portafolio\ VML/assets/images/Moonwalker.gif")
+    no-repeat, fixed center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    height: 700px;
+    width: 500px;
+    text-align: center;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-bottom: 0px;
+    margin-right: 100px;
+    margin-top: 100px;
+    position: relative;
+    float: right;
+    border: #575657 4px solid;
+    background-color:rgba(0, 0, 0, 0.3);
+    border-radius: 15px;
+}
+.divder2 p{
+    color: #fff;
+    font-size:25px;
+    text-shadow: 7px 5px 7px #000000;
+}
+.divder2 b{
+    color: rgb(243, 126, 17)
+}
+.divder2 a{
+    color:rgb(243, 126, 17);
+    font-size: 30px;
+    text-decoration: none;
+    text-shadow: 7px 5px 7px #fa7223;
+}
+.divder2 a:hover{
+    color: rgb(38, 186, 223);
+    text-shadow: 15px 15px 15px #6be7e1;
+}
+.divder2 h1{
+    color: #fff;
+    text-shadow: 12px 10px 12px #000000;
+}
+
+.inter{
+    align-items: center;
+    margin-top: 248px;
+    background-color: rgba(9, 4, 78, 0.8);
+}
+.divsuper{
+    height: 5px;
+    width: 100px;
+    padding-top: 0px;
+    padding-left: 0px;
+    padding-bottom: 0px;
+    margin-right: 20px;
+    margin-top: 30px;
+    position: relative;
+    float: right;
+}
+.super{
+    animation-duration: 7s;
+    animation-name: slidein;
+  }
+  @keyframes slidein {
+    from {
+      margin-top: 200%;
+      width: 100%
+    }
+    to {
+      margin-left: 8%;
+      width: 100%;
+    }
+  }
