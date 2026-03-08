@@ -4,20 +4,429 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assets/images/Leos.ico">
-    <link rel="stylesheet" href="assets/css/miestilo.css">
-    <title>Curriculum</title>
+    <title>Datos Personales — VMLG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --star-blue: #00c8ff;
+            --deep-space: #040d1a;
+            --nebula-purple: #1a0a3a;
+            --hull-grey: #1c2333;
+            --glow-cyan: rgba(0, 200, 255, 0.15);
+            --text-main: #d0eaf8;
+            --accent: #ff6b35;
+        }
+
+        html, body {
+            min-height: 100%;
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text-main);
+            background-color: var(--deep-space);
+        }
+
+        body {
+            background-image: url('assets/images/space.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(4,13,26,0.82) 0%, rgba(26,10,58,0.75) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ── SATELLITE MARQUEE ── */
+        .marquee-wrap {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            overflow: hidden;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        marquee img {
+            filter: drop-shadow(0 0 8px var(--star-blue));
+        }
+
+        /* ── LAYOUT ── */
+        .page-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem 3rem;
+        }
+
+        /* ── ASTRONAUT CORNER ── */
+        .divsuper {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 20;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .divsuper img {
+            width: clamp(80px, 10vw, 160px);
+            height: auto;
+            filter: drop-shadow(0 0 14px var(--star-blue));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-16px); }
+        }
+
+        /* ── SHARED PANEL STYLE ── */
+        .panel {
+            background: rgba(15, 25, 50, 0.72);
+            border: 1px solid rgba(0, 200, 255, 0.18);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(0,200,255,0.05), inset 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .panel h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 2.2vw, 1.5rem);
+            color: var(--star-blue);
+            text-shadow: 0 0 12px rgba(0,200,255,0.5);
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0,200,255,0.2);
+            padding-bottom: 0.75rem;
+        }
+
+        /* ── SHIP GRID (reutilizado para íconos de datos) ── */
+        .ship-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        /* ── SHIP CARD (hover reveal hacia ABAJO) ── */
+        .ship-card {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .ship-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid rgba(0,200,255,0.2);
+            padding: 6px;
+            background: rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            display: block;
+        }
+
+        .ship-card:hover img,
+        .ship-card:focus-within img {
+            transform: translateY(4px) scale(1.04);
+            box-shadow: 0 0 22px rgba(0,200,255,0.45);
+            border-color: var(--star-blue);
+        }
+
+        .ship-label {
+            text-align: center;
+            font-size: 0.65rem;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--star-blue);
+            margin-top: 0.4rem;
+            letter-spacing: 0.06em;
+            opacity: 0.8;
+        }
+
+        /* ── INFO-BOX: abre hacia ABAJO ── */
+        .info-box {
+            position: absolute;
+            top: calc(100% + 10px);         /* ← debajo de la tarjeta */
+            bottom: auto;
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            width: min(320px, 90vw);
+            background: rgba(8, 20, 45, 0.97);
+            border: 1px solid var(--star-blue);
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            box-shadow: 0 0 30px rgba(0,200,255,0.25), 0 8px 32px rgba(0,0,0,0.7);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 100;
+            text-align: left;
+            max-height: 55vh;
+            overflow-y: auto;
+        }
+
+        .ship-card:hover .info-box,
+        .ship-card:focus-within .info-box {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Scrollbar dentro de la caja */
+        .info-box::-webkit-scrollbar { width: 4px; }
+        .info-box::-webkit-scrollbar-track { background: transparent; }
+        .info-box::-webkit-scrollbar-thumb { background: var(--star-blue); border-radius: 2px; }
+
+        .info-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            color: var(--star-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(0,200,255,0.3);
+            padding-bottom: 0.4rem;
+        }
+
+        .info-box .entry {
+            margin-bottom: 0.9rem;
+        }
+
+        .info-box .entry-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.2rem;
+        }
+
+        .info-box .entry-sub {
+            font-size: 0.68rem;
+            color: rgba(208,234,248,0.7);
+            font-style: italic;
+            margin-bottom: 0.15rem;
+        }
+
+        .info-box ul {
+            padding-left: 1rem;
+            margin-top: 0.3rem;
+        }
+
+        .info-box li {
+            font-size: 0.67rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            margin-bottom: 0.1rem;
+        }
+
+        /* Flecha apunta hacia ARRIBA (el box abre hacia abajo) */
+        .info-box::after {
+            content: '';
+            position: absolute;
+            top: -7px;
+            bottom: auto;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 7px;
+            background: var(--star-blue);
+            clip-path: polygon(50% 0, 0 100%, 100% 100%);
+        }
+
+        /* ── PANEL DERECHO: Datos personales texto ── */
+        .divder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            text-align: center;
+        }
+
+        .divder p {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: rgba(0,200,255,0.6);
+            text-transform: uppercase;
+            margin-top: 0.6rem;
+        }
+
+        .divder .dato-valor {
+            font-family: 'Exo 2', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            letter-spacing: 0.02em;
+            margin-top: 0;
+            text-transform: none;
+        }
+
+        .divder address {
+            font-style: normal;
+            font-size: 0.88rem;
+            color: var(--text-main);
+            line-height: 1.7;
+        }
+
+        .divder a {
+            display: inline-block;
+            margin-top: 1.2rem;
+            padding: 0.6rem 1.4rem;
+            border: 1px solid var(--star-blue);
+            border-radius: 8px;
+            color: var(--star-blue);
+            text-decoration: none;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            transition: background 0.25s, color 0.25s, box-shadow 0.25s;
+        }
+
+        .divder a:hover {
+            background: rgba(0,200,255,0.12);
+            color: #fff;
+            box-shadow: 0 0 18px rgba(0,200,255,0.35);
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .page-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+
+            .ship-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+            }
+
+            .info-box {
+                width: min(280px, 88vw);
+            }
+
+            .divsuper {
+                bottom: 0.75rem;
+                right: 0.75rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .ship-grid {
+                grid-template-columns: 1fr;
+                max-width: 180px;
+                margin: 0 auto;
+            }
+        }
+    </style>
 </head>
-<body background="assets/images/space.jpg">
-    <div class="divder2">
-        <h1>Datos personales</h1><br><br>
-        <p><b>CURP</b> LEGV700430HASSNC03</p><br>
-        <p><b>RFC</b> LEGV700430SN5</p><br>
-        <p><b>Domicilio</b> Corregidora #104<br>Residencial Jesús María<br>
-        Jesús María, Ags. CP 20923</p>
-        <div class="inter">
-        <a href="https://drive.google.com/drive/folders/1f6yHRxX27Ni8KCsF3MRvzK_2-V5zME5x?usp=sharing"target="_blank">👉🏻 Comprobantes curriculares</a>
-        </div>
+
+<body>
+
+    <!-- SATELLITE -->
+    <div class="marquee-wrap">
+        <marquee behavior="scroll" direction="right">
+            <img src="assets/images/satelite.png" width="100px" height="100px" alt="Satélite">
+        </marquee>
     </div>
-    
+
+    <div class="page-grid">
+
+        <!-- ══ LEFT: ÍCONOS CON INFO ══ -->
+        <div class="panel">
+            <h1>Portafolio — Datos</h1>
+
+            <div class="ship-grid">
+
+                <!-- Card 1: CURP -->
+                <div class="ship-card" tabindex="0">
+                    <img src="assets/images/Nostromo.png" alt="CURP">
+                    <p class="ship-label">CURP</p>
+
+                    <div class="info-box">
+                        <h2>CURP</h2>
+                        <div class="entry">
+                            <p class="entry-title">Clave Única de Registro de Población</p>
+                            <p class="entry-sub">LEGV700430HASSNC03</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: RFC -->
+                <div class="ship-card" tabindex="0">
+                    <img src="assets/images/Enterprise.png" alt="RFC">
+                    <p class="ship-label">RFC</p>
+
+                    <div class="info-box">
+                        <h2>RFC</h2>
+                        <div class="entry">
+                            <p class="entry-title">Registro Federal de Contribuyentes</p>
+                            <p class="entry-sub">LEGV700430SN5</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Domicilio -->
+                <div class="ship-card" tabindex="0">
+                    <img src="assets/images/Halcon milenario.png" alt="Domicilio">
+                    <p class="ship-label">Domicilio</p>
+
+                    <div class="info-box">
+                        <h2>Domicilio</h2>
+                        <div class="entry">
+                            <p class="entry-title">Dirección</p>
+                            <address>
+                                Corregidora #104<br>
+                                Residencial Jesús María<br>
+                                Jesús María, Ags. CP 20923
+                            </address>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /ship-grid -->
+        </div><!-- /panel izquierdo -->
+
+        <!-- ══ RIGHT: DATOS PERSONALES ══ -->
+        <div class="divder panel">
+            <h1>Datos Personales</h1>
+
+            <p>CURP</p>
+            <span class="dato-valor">LEGV700430HASSNC03</span>
+
+            <p>RFC</p>
+            <span class="dato-valor">LEGV700430SN5</span>
+
+            <p>Domicilio</p>
+            <address>
+                Corregidora #104<br>
+                Residencial Jesús María<br>
+                Jesús María, Ags. CP 20923
+            </address>
+
+            <a href="https://drive.google.com/drive/folders/1f6yHRxX27Ni8KCsF3MRvzK_2-V5zME5x?usp=sharing" target="_blank">
+                👉🏻 Comprobantes curriculares
+            </a>
+        </div>
+
+    </div><!-- /page-grid -->
+
+    <!-- ASTRONAUT -->
+    <div class="divsuper">
+        <img src="assets/images/astronauta.png" alt="Astronauta">
+    </div>
+
 </body>
 </html>

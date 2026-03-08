@@ -4,33 +4,528 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="assets/images/Leos.ico">
-    <link rel="stylesheet" href="assets/css/miestilo.css">
     <title>VMLG</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --star-blue: #00c8ff;
+            --deep-space: #040d1a;
+            --nebula-purple: #1a0a3a;
+            --hull-grey: #1c2333;
+            --glow-cyan: rgba(0, 200, 255, 0.15);
+            --text-main: #d0eaf8;
+            --accent: #ff6b35;
+        }
+
+        html, body {
+            min-height: 100%;
+            font-family: 'Exo 2', sans-serif;
+            color: var(--text-main);
+            background-color: var(--deep-space);
+        }
+
+        body {
+            background-image: url('assets/images/space.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(4,13,26,0.82) 0%, rgba(26,10,58,0.75) 100%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ── SATELLITE MARQUEE ── */
+        .marquee-wrap {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            overflow: hidden;
+            background: transparent;
+            pointer-events: none;
+        }
+
+        marquee img {
+            filter: drop-shadow(0 0 8px var(--star-blue));
+        }
+
+        /* ── LAYOUT ── */
+        .page-grid {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem 3rem;
+        }
+
+        /* ── ASTRONAUT CORNER ── */
+        .divsuper {
+            position: fixed;
+            bottom: 1.5rem;
+            right: 1.5rem;
+            z-index: 20;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .divsuper img {
+            width: clamp(80px, 10vw, 160px);
+            height: auto;
+            filter: drop-shadow(0 0 14px var(--star-blue));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-16px); }
+        }
+
+        /* ── SHARED PANEL STYLE ── */
+        .panel {
+            background: rgba(15, 25, 50, 0.72);
+            border: 1px solid rgba(0, 200, 255, 0.18);
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            box-shadow: 0 0 30px rgba(0,200,255,0.05), inset 0 0 20px rgba(0,0,0,0.3);
+        }
+
+        .panel h1 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: clamp(1rem, 2.2vw, 1.5rem);
+            color: var(--star-blue);
+            text-shadow: 0 0 12px rgba(0,200,255,0.5);
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid rgba(0,200,255,0.2);
+            padding-bottom: 0.75rem;
+        }
+
+        /* ── LEFT: PORTFOLIO ── */
+        .divizq {
+            /* inherits .panel */
+        }
+
+        .ship-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        /* ── SHIP CARD (hover reveal) ── */
+        .ship-card {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .ship-card img {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: contain;
+            border-radius: 8px;
+            border: 1px solid rgba(0,200,255,0.2);
+            padding: 6px;
+            background: rgba(0,0,0,0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            display: block;
+        }
+
+        .ship-card:hover img,
+        .ship-card:focus-within img {
+            transform: translateY(-4px) scale(1.04);
+            box-shadow: 0 0 22px rgba(0,200,255,0.45);
+            border-color: var(--star-blue);
+        }
+
+        .ship-label {
+            text-align: center;
+            font-size: 0.65rem;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--star-blue);
+            margin-top: 0.4rem;
+            letter-spacing: 0.06em;
+            opacity: 0.8;
+        }
+
+        /* Hidden box */
+        .info-box {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 50%;
+            transform: translateX(-50%) translateY(-6px);
+            width: min(320px, 90vw);
+            background: rgba(8, 20, 45, 0.97);
+            border: 1px solid var(--star-blue);
+            border-radius: 10px;
+            padding: 1rem 1.2rem;
+            box-shadow: 0 0 30px rgba(0,200,255,0.25), 0 8px 32px rgba(0,0,0,0.7);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease, transform 0.25s ease;
+            z-index: 100;
+            text-align: left;
+            max-height: 55vh;
+            overflow-y: auto;
+        }
+
+        .ship-card:hover .info-box,
+        .ship-card:focus-within .info-box {
+            opacity: 1;
+            pointer-events: auto;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        /* Scrollbar inside box */
+        .info-box::-webkit-scrollbar { width: 4px; }
+        .info-box::-webkit-scrollbar-track { background: transparent; }
+        .info-box::-webkit-scrollbar-thumb { background: var(--star-blue); border-radius: 2px; }
+
+        .info-box h2 {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            color: var(--star-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.75rem;
+            border-bottom: 1px solid rgba(0,200,255,0.3);
+            padding-bottom: 0.4rem;
+        }
+
+        .info-box .entry {
+            margin-bottom: 0.9rem;
+        }
+
+        .info-box .entry-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 0.2rem;
+        }
+
+        .info-box .entry-sub {
+            font-size: 0.68rem;
+            color: rgba(208,234,248,0.7);
+            font-style: italic;
+            margin-bottom: 0.15rem;
+        }
+
+        .info-box ul {
+            padding-left: 1rem;
+            margin-top: 0.3rem;
+        }
+
+        .info-box li {
+            font-size: 0.67rem;
+            color: var(--text-main);
+            line-height: 1.5;
+            margin-bottom: 0.1rem;
+        }
+
+        /* Arrow tip */
+        .info-box::after {
+            content: '';
+            position: absolute;
+            bottom: -7px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 7px;
+            background: var(--star-blue);
+            clip-path: polygon(0 0, 100% 0, 50% 100%);
+        }
+
+        /* ── RIGHT: CONTACT ── */
+        .divder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
+            text-align: center;
+        }
+
+        .divder img {
+            width: clamp(120px, 15vw, 200px);
+            height: auto;
+            border-radius: 50%;
+            border: 2px solid var(--star-blue);
+            box-shadow: 0 0 24px rgba(0,200,255,0.35);
+            margin-bottom: 0.5rem;
+        }
+
+        .divder p {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            color: rgba(0,200,255,0.6);
+            text-transform: uppercase;
+            margin-top: 0.6rem;
+        }
+
+        .divder a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-size: 0.88rem;
+            transition: color 0.2s;
+        }
+
+        .divder a:hover { color: var(--star-blue); }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .page-grid {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+                gap: 1.5rem;
+            }
+
+            .ship-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 0.75rem;
+            }
+
+            /* On mobile: boxes open downward */
+            .info-box {
+                bottom: auto;
+                top: calc(100% + 10px);
+                width: min(280px, 88vw);
+            }
+
+            .info-box::after {
+                bottom: auto;
+                top: -7px;
+                clip-path: polygon(50% 0, 0 100%, 100% 100%);
+                background: var(--star-blue);
+            }
+
+            .divsuper {
+                bottom: 0.75rem;
+                right: 0.75rem;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .ship-grid {
+                grid-template-columns: 1fr;
+                max-width: 180px;
+                margin: 0 auto;
+            }
+        }
+    </style>
 </head>
 
-<body background="assets/images/space.jpg">
-    <marquee behavior="scroll" direction="right">
-        <img src="assets/images/satelite.png" width="100px" height="100px">
-    </marquee>
-    <div class="divizq">
-        <h1>Espacio para el portafolio</h1> 
-<p>Idea: poner botones con caja oculta</p>
+<body>
+
+    <!-- SATELLITE -->
+    <div class="marquee-wrap">
+        <marquee behavior="scroll" direction="right">
+            <img src="assets/images/satelite.png" width="100px" height="100px" alt="Satélite">
+        </marquee>
     </div>
 
-    <div class="divder">
-        <h1>Victor Manuel Leos</h1>
-        <img src="assets/images/Leos.png" height="200px" width="200 px" alt="Victor Manuel Leos">
-        <p>Teléfono</p>
-        <a href="tel:+524499301756">449 930 17 56</a>
-        <p>Correo electrónico</p>
-        <a href="mailto:victorm.leos@protonmail.com"target="_blank">victorm.leos@protonmail.com</a>
-        <p>Curriculum vitae</p>
-        <a href="Personales.html"target="_blank">Ir a la curricula</a>
-    </div>
+    <div class="page-grid">
+
+        <!-- ══ LEFT: PORTFOLIO ══ -->
+        <div class="divizq panel">
+            <h1>Portafolio</h1>
+
+            <div class="ship-grid">
+
+                <!-- Card 1: Nostromo → Experiencia Laboral -->
+                <div class="ship-card" tabindex="0">
+                    <img src="assets/images/Nostromo.png" alt="Nostromo">
+                    <p class="ship-label">Experiencia</p>
+
+                    <div class="info-box">
+                        <h2>Experiencia Laboral</h2>
+
+                        <div class="entry">
+                            <p class="entry-title">Gobierno Federal</p>
+                            <p class="entry-sub">Coordinador municipal — Programas de Bienestar<br>Feb 2019 – Oct 2021</p>
+                            <ul>
+                                <li>Coordinación de Servidores de la Nación a nivel municipal</li>
+                                <li>Coordinación y logística en eventos masivos</li>
+                                <li>Entrega de apoyos federales a la ciudadanía</li>
+                                <li>Servicios digitales y apoyo técnico informático (región 2)</li>
+                                <li>Maestro de Ceremonias en visitas presidenciales</li>
+                            </ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">ATUSA</p>
+                            <p class="entry-sub">Analista de datos — Sep 2018 – Ene 2019</p>
+                            <ul>
+                                <li>Análisis de datos de sensores en unidades de transporte</li>
+                                <li>Reportes de ruta, recorridos, gastos y anomalías</li>
+                            </ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Impacto Total</p>
+                            <p class="entry-sub">Coordinador de Operaciones — Abr – Sep 2018</p>
+                            <ul>
+                                <li>Supervisión de puestos de guardia</li>
+                                <li>Elaboración de roles de servicio</li>
+                                <li>Aseguramiento de calidad y análisis de riesgo</li>
+                            </ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Seguridad Privada Helios</p>
+                            <p class="entry-sub">Propietario y Director General — Jul 2016 – Abr 2018</p>
+                            <ul>
+                                <li>Análisis de riesgo y administración de recursos</li>
+                                <li>Marketing y diseño gráfico de publicidad</li>
+                                <li>Venta de servicios y trámites ante Gobierno</li>
+                            </ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Condominio Pulgas Pandas</p>
+                            <p class="entry-sub">Supervisor de Seguridad — Ene 2011 – Jul 2016</p>
+                            <ul>
+                                <li>Análisis de riesgo y coordinación de horarios</li>
+                                <li>Supervisión de puestos de vigilancia</li>
+                            </ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Gobierno del Estado</p>
+                            <p class="entry-sub">Encargado de Seguridad — Palacio de Gobierno<br>Feb 1999 – Ene 2011</p>
+                            <ul>
+                                <li>Rutas y logística para eventos del Gobernador</li>
+                                <li>Escolta de la familia del Gobernador</li>
+                                <li>Coordinación de horarios y puestos de vigilancia</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Enterprise → Cursos y Capacitaciones -->
+                <div class="ship-card" tabindex="0">
+                    <img src="assets/images/Enterprise.png" alt="Enterprise">
+                    <p class="ship-label">Cursos</p>
+
+                    <div class="info-box">
+                        <h2>Cursos y Capacitaciones</h2>
+
+                        <div class="entry">
+                            <p class="entry-title">Cruz Roja Mexicana</p>
+                            <ul><li>Seis acciones para salvar una vida</li></ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Gobierno del Estado de Aguascalientes</p>
+                            <ul>
+                                <li>Asertividad</li>
+                                <li>Manejo de armamento</li>
+                                <li>Primeros auxilios</li>
+                                <li>Protección a funcionarios</li>
+                            </ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Armored Security</p>
+                            <ul><li>Protección a Funcionarios y manejo de armas cortas</li></ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">CECOI</p>
+                            <ul><li>Neuromarketing</li></ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Google</p>
+                            <ul><li>Fundamentos de Marketing Digital</li></ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Fundación Carlos Slim</p>
+                            <ul>
+                                <li>Técnico en Seguridad Informática</li>
+                                <li>Auxiliar contable</li>
+                                <li>Técnico en Redes de datos</li>
+                                <li>Administrador para Ambientes Virtuales de Aprendizaje</li>
+                                <li>Administrador de Bases de Datos</li>
+                                <li>Técnico en instalación y reparación de equipos de cómputo</li>
+                                <li>Administrador de Servidores</li>
+                            </ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">SEP</p>
+                            <ul><li>Diplomado: Técnico en Sistemas Informáticos</li></ul>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Secretaría de Economía</p>
+                            <ul><li>Formación de personas facilitadoras en Educación Financiera</li></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Halcón Milenario → Escolaridad -->
+                <div class="ship-card" tabindex="0">
+                    <img src="assets/images/Halcon milenario.png" alt="Halcón Milenario">
+                    <p class="ship-label">Escolaridad</p>
+
+                    <div class="info-box">
+                        <h2>Escolaridad</h2>
+
+                        <div class="entry">
+                            <p class="entry-title">Licenciatura en Seguridad Pública</p>
+                            <p class="entry-sub">Universidad Abierta y a Distancia de México — UnADM (Trunca)</p>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Ingeniería en Sistemas Computacionales</p>
+                            <p class="entry-sub">Tecnológico Universitario de Aguascalientes — TUA</p>
+                        </div>
+
+                        <div class="entry">
+                            <p class="entry-title">Servicios Particulares</p>
+                            <ul>
+                                <li>Mantenimiento preventivo y correctivo en equipos de cómputo</li>
+                                <li>Instalación de Sistemas Operativos (Windows y Linux)</li>
+                                <li>Reparación de equipos de escritorio y laptop</li>
+                                <li>Instalación de software y hardware</li>
+                                <li>Soporte técnico a usuario final</li>
+                                <li>Atención a cajeros automáticos y Brinx Box</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div><!-- /ship-grid -->
+        </div><!-- /divizq -->
+
+        <!-- ══ RIGHT: CONTACT ══ -->
+        <div class="divder panel">
+            <h1>Victor Manuel Leos</h1>
+            <img src="assets/images/Leos.png" alt="Victor Manuel Leos">
+            <p>Teléfono</p>
+            <a href="tel:+524499078915">449 907 89 15</a>
+            <p>Correo electrónico</p>
+            <a href="/cdn-cgi/l/email-protection#91e7f8f2e5fee3fcbffdf4fee2d1e1e3fee5fefffcf0f8fdbff2fefc" target="_blank"><span class="__cf_email__" data-cfemail="30465953445f425d1e5c555f437040425f445f5e5d51595c1e535f5d">[email&#160;protected]</span></a>
+            <p>Curriculum vitae</p>
+            <a href="Personales.html" target="_blank">Ir a la currícula</a>
+        </div>
+
+    </div><!-- /page-grid -->
+
+    <!-- ASTRONAUT -->
     <div class="divsuper">
-    <div class="super">
-        <img src="assets/images/astronauta.png" height="180px" width="180 px">
+        <img src="assets/images/astronauta.png" alt="Astronauta flotando">
     </div>
-</div>
-</body>
-</html>
